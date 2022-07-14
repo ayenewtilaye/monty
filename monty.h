@@ -1,24 +1,14 @@
-#ifndef MONTY_H
-#define MONTY_H
+#ifndef __MONTY__H
+#define __MONTY__H
+
 #include <stdio.h>
-#include <fcntl.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 #include <ctype.h>
+#include <stdarg.h>
 
-/**
- * struct op_ret_queue_s - Return value of opcodes and if list is stack/queue
- * @opcode_return: Return value of the void opcode functions
- * @queue_val: 1 if list is a queue, 0 if it's a stack
- **/
-typedef struct op_ret_queue_s
-{
-	int opcode_return;
-	int queue_val;
-} opret_q;
 
-extern opret_q ret_and_q;
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -50,27 +40,48 @@ typedef struct instruction_s
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-/**void push(stack_t **stack, unsigned int line_num);**/
-void pall(stack_t **stack, unsigned int line_num);
-void pint(stack_t **stack, unsigned int line_num);
-void pop(stack_t **stack, unsigned int line_num);
-void swap(stack_t **stack, unsigned int line_num);
-void add(stack_t **stack, unsigned int line_num);
-void sub(stack_t **stack, unsigned int line_num);
-void _div(stack_t **stack, unsigned int line_num);
-void mod(stack_t **stack, unsigned int line_num);
-void mul(stack_t **stack, unsigned int line_num);
-void pchar(stack_t **stack, unsigned int line_num);
-void pstr(stack_t **stack, unsigned int line_num);
-void rotr(stack_t **stack, unsigned int line_num);
-void rotl(stack_t **stack, unsigned int line_num);
+extern stack_t *head;
 
-void add_node(stack_t **stack, int push_value);
-void add_node_end(stack_t **stack, int push_value);
+/*Type for opcode functions*/
+typedef void (*op_func)(stack_t **, unsigned int);
 
-char *find_command(char *line, stack_t **stack, unsigned int line_num);
-int check_codes(char *command, stack_t **stack, size_t line_num);
-int int_check(char *push_arg);
-void free_and_exit(char *line, FILE *file, stack_t *stack);
-void free_stack(stack_t *stack);
-#endif
+/*File operations*/
+void open_file(char *);
+void read_file(FILE *);
+int len_chars(FILE *);
+int interpret_line(char *, int, int);
+void find_func(char *, char *, int, int);
+
+/*Stack operations*/
+stack_t *create_node(int n);
+void free_nodes(void);
+void print_stack(stack_t **, unsigned int);
+void add_to_stack(stack_t **, unsigned int);
+void add_to_queue(stack_t **, unsigned int);
+
+void call_fun(op_func, char *, char *, int, int);
+void print_top(stack_t **, unsigned int);
+void pop_top(stack_t **, unsigned int);
+void nop(stack_t **, unsigned int);
+void swap_nodes(stack_t **, unsigned int);
+
+/*Math operations with nodes*/
+void add_nodes(stack_t **, unsigned int);
+void sub_nodes(stack_t **, unsigned int);
+void div_nodes(stack_t **, unsigned int);
+void mul_nodes(stack_t **, unsigned int);
+void mod_nodes(stack_t **, unsigned int);
+
+/*String operations*/
+void print_char(stack_t **, unsigned int);
+void print_str(stack_t **, unsigned int);
+void rotl(stack_t **, unsigned int);
+
+/*Error hanlding*/
+void err(int error_code, ...);
+void more_err(int error_code, ...);
+void string_err(int error_code, ...);
+void rotr(stack_t **, unsigned int);
+
+
+#endif /*__MONTY__H*/
